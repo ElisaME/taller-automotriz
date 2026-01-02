@@ -2,7 +2,7 @@
  * Representa un evento de una orden
  */
 
-import type { EventType } from "./enums";
+import type { EventType, OrderStatus } from "./enums";
 
 export interface Event {
     /** Identificador único del evento */
@@ -12,9 +12,9 @@ export interface Event {
     /** Monto autorizado c/IVA, 2 decimales */
     type:EventType;
     /** Estado anterior de la orden */
-    fromStatus?:EventType;
+    fromStatus?:OrderStatus | undefined | null;
     /** Estado nuevo de la orden */
-    toStatus?:EventType;
+    toStatus?:OrderStatus | undefined | null;
     /** Fecha y hora del evento */
     timeStamp:string;
 }

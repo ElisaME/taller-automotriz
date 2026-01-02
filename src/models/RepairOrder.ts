@@ -2,8 +2,10 @@
  * Representa una orden de reparación del taller
  */
 
+import type { OrderSource } from "@/types";
 import type { Authorization } from "./Authorization";
-import type { OrderSource, OrderStatus } from "./enums";
+import type { OrderStatus } from "./enums";
+import type { Event } from "./Event";
 import type { Service } from "./Service";
 
 export interface RepairOrder {
@@ -28,9 +30,9 @@ export interface RepairOrder {
     /** Lista de servicios/reparaciones asociados */
     services:Service[];
     /** Historial de eventos */
-    events:[];
+    events:Event[];
     /** Lista de errores de negocio asociados */
-    errors:[];
+    errors:string[]; //Falta definirlos
     /** Lista de errores de negocio asociados */
     source:OrderSource;
 }

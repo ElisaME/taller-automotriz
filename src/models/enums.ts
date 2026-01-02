@@ -13,11 +13,6 @@ export enum OrderStatus {
 }
 
 /**
- * Origen de una orden de reparación
- */
-export type OrderSource = 'TALLER' | ' CLIENTE';
-
-/**
  * Tipos de eventos en una orden de reparación
  */
 export enum EventType {
@@ -29,4 +24,11 @@ export enum EventType {
     ORDEN_COMPLETADA = 'ORDEN_COMPLETADA',
     ORDEN_ENTREGADA = 'ORDEN_ENTREGADA',
     ORDEN_CANCELADA = 'ORDEN_CANCELADA'
+}
+
+/** 
+ * Tipos de errores
+ */
+export enum ErrorType {
+    REQUIRES_REAUTH = 'REQUIRES_REAUTH',
 }
