@@ -129,7 +129,7 @@ export const seedData = () : void =>{
             {
                 id: generateId(),
                 orderId:'',
-                type: EventType.ORDEN_CREADA,
+                type: EventType.CREATED,
                 fromStatus:null,
                 toStatus: OrderStatus.CREATED,
                 timeStamp: new Date().toISOString()
@@ -155,7 +155,7 @@ export const seedData = () : void =>{
         {
             id: generateId(),
             orderId: '',
-            type: EventType.ORDEN_CREADA,
+            type: EventType.CREATED,
             fromStatus: null,
             toStatus: OrderStatus.CREATED,
             timeStamp: new Date(Date.now() - 86400000).toISOString(), // 1 día atrás
@@ -163,7 +163,7 @@ export const seedData = () : void =>{
         {
             id: generateId(),
             orderId: '',
-            type: EventType.ORDEN_DIAGNOSTICADA,
+            type: EventType.DIAGNOSED,
             fromStatus: OrderStatus.CREATED,
             toStatus: OrderStatus.DIAGNOSED,
             timeStamp: new Date().toISOString(),
@@ -195,7 +195,7 @@ export const seedData = () : void =>{
         {
             id: generateId(),
             orderId: '',
-            type: EventType.ORDEN_CREADA,
+            type: EventType.CREATED,
             fromStatus: null,
             toStatus: OrderStatus.CREATED,
             timeStamp: new Date(Date.now() - 86400000).toISOString(), // 1 día atrás
@@ -203,7 +203,7 @@ export const seedData = () : void =>{
         {
             id: generateId(),
             orderId: '',
-            type: EventType.ORDEN_DIAGNOSTICADA,
+            type: EventType.DIAGNOSED,
             fromStatus: OrderStatus.CREATED,
             toStatus: OrderStatus.DIAGNOSED,
             timeStamp: new Date().toISOString(),

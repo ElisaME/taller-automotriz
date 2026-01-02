@@ -13,9 +13,9 @@ export interface Service {
     name:string;
     /** Descripción del servicio */
     description:string;
-    /** Tiempo estimado de mano de obra */
+    /** Valor estimado de mano de obra */
     laborEstimated:number;
-    /** Tiempo real de mano de obra */
+    /** Valor real de mano de obra */
     laborReal:number;
     /** Componentes o refacciones asociados */
     components: Component[];
