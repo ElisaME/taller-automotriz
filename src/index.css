@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-roboto: 'Roboto Condensed', sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -42,6 +44,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-lemon: rgba(208 223 0);
+  --color-primary: #63666a;
+  --color-secondary: #53565a;
 }
 
 :root {
@@ -120,4 +125,9 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+body {
+  color: var(--color-primary);
+  font-family: 'Roboto Condensed', sans-serif;
 }
