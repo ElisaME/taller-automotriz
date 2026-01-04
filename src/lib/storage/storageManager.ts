@@ -1,10 +1,12 @@
-import type { Customer, RepairOrder, Vehicle } from "@/models";
+import type { Component, Customer, RepairOrder, Service, Vehicle } from "@/models";
 
 class StorageManager {
     private readonly KEYS = {
         ORDERS:'taller_orders',
         CUSTOMERS: 'taller_customers',
         VEHICLES: 'taller_vehicles',
+        SERVICES : 'taller_services',
+        COMPONENTS: 'taller_components'
     };
      
     /**
@@ -108,6 +110,48 @@ class StorageManager {
     getOrdersByCustomer(customerId:string): RepairOrder[] {
         const orders = this.getAllRepairOrders();
         return orders.filter(o=> o.customerId === customerId);
+    }
+
+    //==========COMPONENTS===========
+    getAllComponents() {
+        return this.readFromStorage<Component>(this.KEYS.COMPONENTS);
+    }
+
+    getComponent(id:string) : Component | null {
+        const components = this.getAllComponents();
+        return components.find(s=> s.id === id) || null;
+    }
+
+    saveComponent(component:Component):void {
+        const components = this.getAllComponents();
+        const componentIndex = components.findIndex(s => s.id === component.id);
+         if (componentIndex >= 0) {
+            components[componentIndex] = component;
+        }else{
+            components.push(component);
+        }
+        this.saveToStorage(this.KEYS.COMPONENTS, components);
+    }
+
+    //==========SERVICES===========
+    getAllServices() {
+        return this.readFromStorage<Service>(this.KEYS.SERVICES);
+    }
+
+    getService(id:string) : Service | null {
+        const services = this.getAllServices();
+        return services.find(s=> s.id === id) || null;
+    }
+
+    saveService(service:Service):void {
+        const services = this.getAllServices();
+        const serviceIndex = services.findIndex(s => s.id === service.id);
+         if (serviceIndex >= 0) {
+            services[serviceIndex] = service;
+        }else{
+            services.push(service);
+        }
+        this.saveToStorage(this.KEYS.SERVICES, services);
     }
 
     //Para testing

@@ -3,10 +3,12 @@ import { SearchBar } from '@/components/shared/search-bar';
 import { OrdersFilter } from './orders-filter';
 import { TableOrders } from './orders-table';
 import { searchOrders } from '@/lib/storage/orderQueries';
+import { useNavigate } from 'react-router-dom';
 
 export default function OrdersWorkshop() {
   const [searchValue, setSearchValue] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const navigate = useNavigate();
 
   const filteredOrders = searchOrders(searchValue);
   const sortedOrders =
@@ -34,7 +36,9 @@ export default function OrdersWorkshop() {
         {/* Tabla de órdenes */}
         <TableOrders
           orders={sortedOrders}
-          onOrderClick={() => {}}
+          onOrderClick={(id) => {
+            navigate(`/taller/ordenes/${id}`);
+          }}
         ></TableOrders>
       </div>
     </>

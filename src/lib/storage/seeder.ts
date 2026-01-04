@@ -77,6 +77,7 @@ export const seedData = () : void =>{
             serviceId: ''
         }
     ]
+
     const componentsFrenos: Component[] = [
         {
         id: generateId(),
@@ -94,7 +95,7 @@ export const seedData = () : void =>{
         orderId: '',
         name: 'Cambio de aceite y filtro',
         description: 'Servicio regular de mantenimiento',
-        laborEstimated: 300,
+        laborEstimated: 2,
         laborReal: 0,
         components: componentsAceite,
     };
@@ -105,7 +106,7 @@ export const seedData = () : void =>{
         orderId: '',
         name: 'Cambio de frenos',
         description: 'Balatas y discos',
-        laborEstimated: 500,
+        laborEstimated: 5,
         laborReal: 0,
         components: componentsFrenos,
     };
@@ -115,7 +116,7 @@ export const seedData = () : void =>{
 
     const order1 : RepairOrder= {
         id: generateId(),
-        orderId : 'RO- 0001',
+        orderId : 'RO-0001',
         customerId: customer1.id,
         vehicleId: vehicle1.id,
         status: OrderStatus.CREATED as OrderStatus,
