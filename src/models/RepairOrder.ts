@@ -4,7 +4,7 @@
 
 import type { OrderSource } from "@/types";
 import type { Authorization } from "./Authorization";
-import type { OrderStatus } from "./enums";
+import type { BusinessError, OrderStatus } from "./enums";
 import type { Event } from "./Event";
 import type { Service } from "./Service";
 
@@ -32,7 +32,7 @@ export interface RepairOrder {
     /** Historial de eventos */
     events:Event[];
     /** Lista de errores de negocio asociados */
-    errors:string[]; //Falta definirlos
+    errors:BusinessError[]; //Falta definirlos
     /** Lista de errores de negocio asociados */
     source:OrderSource;
 }

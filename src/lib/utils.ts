@@ -1,6 +1,8 @@
-import type { Component, RepairOrder } from "@/models";
+import { OrderStatus, type Component, type RepairOrder } from "@/models";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type { TransitionAction } from '@/types';
+import { validTransitionsWorkshop } from "@/domain/orderStatusManager";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -40,6 +42,17 @@ export const getTotalServicesLabor = (services : RepairOrder["services"]) : numb
   return services.reduce((total, service) => total + service.laborEstimated, 0);
 }
 
+export const getTotalReal = (order : RepairOrder) : number => {
+  return order.services.reduce((total, service) => {
+      const laborCost = service.laborReal > 0 ? service.laborReal : service.laborEstimated;
+      const componentsCost = service.components.reduce(
+        (sum, comp) => sum + (comp.real > 0 ? comp.real : comp.estimated),
+        0
+      );
+      return total + laborCost + componentsCost;
+    }, 0);
+}
+
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString("es-MX", {
@@ -50,3 +63,20 @@ export const formatDate = (dateString: string): string => {
                 minute: '2-digit',
   });
 }
+
+export const transitionActionsWorkshop: Record<OrderStatus, TransitionAction> = {
+  [OrderStatus.DIAGNOSED]: { label: 'Diagnosticar', variant: 'bg-gray-600' },
+  [OrderStatus.AUTHORIZED]: { label: ''},//Solo el cliente autoriza
+  [OrderStatus.IN_PROGRESS]: { label: 'Iniciar reparación', variant: 'bg-sky-500' },
+  [OrderStatus.COMPLETED]: { label: 'Completar reparación', variant: 'bg-blue-500' },
+  [OrderStatus.DELIVERED]: { label: 'Entregar vehículo', variant: 'primary' },
+  [OrderStatus.CANCELLED]: { label: 'Cancelar orden', variant: 'bg-red-500' },
+  [OrderStatus.WAITING_FOR_APPROVAL]: { label: 'Solicitar reautorización', variant: 'bg-amber-500' },
+  [OrderStatus.CREATED]: { label: '' }, //NA
+};
+
+export const getAvailableTransitions = (
+  currentStatus: OrderStatus
+): OrderStatus[] => {
+  return validTransitionsWorkshop[currentStatus] ?? [];
+};

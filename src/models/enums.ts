@@ -30,8 +30,18 @@ export enum EventType {
  * Tipos de errores
  */
 export enum ErrorType {
+    INVALID_TRANSITION = 'INVALID_TRANSITION',
+    MISSING_AUTHORIZATION = 'MISSING_AUTHORIZATION',
     REQUIRES_REAUTH = 'REQUIRES_REAUTH',
     NO_SERVICES = 'NO_SERVICES',
     NOT_ALLOWED_AFTER_AUTHORIZATION = 'NOT_ALLOWED_AFTER_AUTHORIZATION',
     ORDER_CANCELLED = 'ORDER_CANCELLED'
+}
+
+export interface BusinessError {
+  id: string;
+  orderId: string;
+  timestamp: string;
+  type: ErrorType;
+  message: string;
 }

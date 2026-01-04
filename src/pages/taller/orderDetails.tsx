@@ -11,13 +11,23 @@ import { storageManager } from '@/lib/storage/storageManager';
 import {
   formatCurrency,
   formatDate,
+  getAvailableTransitions,
   getTotalComponents,
   getTotalServicesLabor,
+  transitionActionsWorkshop,
 } from '@/lib/utils';
-import { type Customer, type RepairOrder, type Vehicle } from '@/models';
+import {
+  OrderStatus,
+  type BusinessError,
+  type Customer,
+  type RepairOrder,
+  type Vehicle,
+} from '@/models';
 import { ArrowLeft, CarFront, CirclePlus, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { transitionOrder } from '@/hooks/orderService';
+import { toast } from 'sonner';
 
 export function OrderDetails() {
   const { id } = useParams<{ id: string }>();
@@ -57,6 +67,25 @@ export function OrderDetails() {
   );
 
   const totalEstimated = (totalComponents + totalServices) * 1.16;
+  const transitions = getAvailableTransitions(order?.status as OrderStatus);
+
+  const transitionOrderAction = (orderId: string, newStatus: OrderStatus) => {
+    setIsLoading(true);
+    try {
+      const result = transitionOrder(orderId, newStatus);
+      if (result.success && result.order) {
+        setOrder(result.order);
+        toast.success('Estado de la orden actualizado correctamente');
+      } else {
+        toast.error(result.error);
+      }
+    } catch (error) {
+      toast.error('Error al actualizar el estado de la orden');
+      console.error('Error al actualizar el estado de la orden:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -95,7 +124,19 @@ export function OrderDetails() {
 
         <div className="flex items-center space-x-3">
           {/* Menú de acciones (solo para taller) */}
-          {/* Dropdown con acciones disponibles según el estado */}
+          {transitions.map((nextStatus) => {
+            const action = transitionActionsWorkshop[nextStatus];
+            if (!action.label) return null;
+            return (
+              <Button
+                key={nextStatus}
+                className={`cursor-pointer ${action.variant}`}
+                onClick={() => transitionOrderAction(order.id, nextStatus)}
+              >
+                {action.label}
+              </Button>
+            );
+          })}
         </div>
       </div>
       <p>
@@ -205,6 +246,24 @@ export function OrderDetails() {
             Historial de Eventos
           </h2>
           <OrderTimelineEvents events={order.events} />
+          {/* Registro de Errores */}
+          <h2 className="font-bold text-xl text-secondary border-b-2 mb-0">
+            Registro de Errores
+          </h2>
+          <Table>
+            <TableBody>
+              {order.errors.length > 0 ? (
+                order.errors.map((error: BusinessError) => (
+                  <TableRow>
+                    <TableCell>{formatDate(error.timestamp)}</TableCell>
+                    <TableCell>{error.type}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow />
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

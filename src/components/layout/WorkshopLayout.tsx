@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Wrench } from 'lucide-react';
+import { Toaster } from 'sonner';
 
 export function WorkshopLayout() {
   return (
@@ -24,6 +25,7 @@ export function WorkshopLayout() {
       </header>
       <main className="container mx-auto flex-1 p-6 bg-gray-100">
         <Outlet />
+        <Toaster richColors position="top-right" />
       </main>
     </div>
   );
