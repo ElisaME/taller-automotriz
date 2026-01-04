@@ -6,6 +6,7 @@ import RoleSelector from './pages/RoleSelector';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import DashboardTaller from './pages/taller/page';
 import DashboardCliente from './pages/client/page';
+import { WorkshopLayout } from '@/components/layout/WorkshopLayout';
 
 seedData();
 
@@ -20,10 +21,12 @@ function App() {
             path="/taller"
             element={
               <ProtectedRoute requiredRole="TALLER">
-                <DashboardTaller />
+                <WorkshopLayout />
               </ProtectedRoute>
             }
-          ></Route>
+          >
+            <Route index element={<DashboardTaller />} />
+          </Route>
           <Route
             path="/cliente"
             element={
