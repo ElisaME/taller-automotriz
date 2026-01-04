@@ -1,4 +1,4 @@
-import OrdersWorkshop from '@/components/orders/orders-workshop';
+import OrdersWorkshop from '@/components/orders/workshop/orders-workshop';
 import { Button } from '@/components/ui/button';
 import {
   Card,

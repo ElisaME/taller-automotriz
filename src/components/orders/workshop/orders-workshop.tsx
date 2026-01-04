@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SearchBar } from '@/components/shared/search-bar';
-import { OrdersFilter } from './orders-filter';
-import { TableOrders } from './orders-table';
+import { OrdersFilter } from '../orders-filter';
+import { TableOrders } from '../orders-table';
 import { searchOrders } from '@/lib/storage/orderQueries';
 import { useNavigate } from 'react-router-dom';
 

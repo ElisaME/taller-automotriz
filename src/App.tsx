@@ -8,8 +8,8 @@ import DashboardTaller from './pages/taller/page';
 import DashboardCliente from './pages/client/page';
 import { WorkshopLayout } from '@/components/layout/WorkshopLayout';
 import { OrderDetails } from './pages/taller/orderDetails';
-import { storageManager } from './lib/storage/storageManager';
-storageManager.clearAll();
+// import { storageManager } from './lib/storage/storageManager';
+// storageManager.clearAll();
 seedData();
 
 function App() {

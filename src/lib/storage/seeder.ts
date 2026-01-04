@@ -75,6 +75,22 @@ export const seedData = () : void =>{
             estimated:500,
             real:0,
             serviceId: ''
+        },
+         {
+            id: generateId(),
+            name: 'Filtro de aceite OEM',
+            description: 'Filtro de alta calidad',
+            estimated:350,
+            real:0,
+            serviceId: ''
+        },
+         {
+            id: generateId(),
+            name: 'Arandela de Cárter',
+            description: 'Arandela nueva para sellar el cárter',
+            estimated:50,
+            real:0,
+            serviceId: ''
         }
     ]
 
@@ -92,25 +108,25 @@ export const seedData = () : void =>{
     // Servicios
     const service1: Service = {
         id: generateId(),
-        orderId: '',
+        orderId: '', // La relación seria mejor  orden --> servicios, porque repetir servicios 
         name: 'Cambio de aceite y filtro',
         description: 'Servicio regular de mantenimiento',
-        laborEstimated: 2,
+        laborEstimated: 350,
         laborReal: 0,
         components: componentsAceite,
     };
-    
 
     const service2: Service = {
         id: generateId(),
         orderId: '',
         name: 'Cambio de frenos',
         description: 'Balatas y discos',
-        laborEstimated: 5,
+        laborEstimated: 700,
         laborReal: 0,
         components: componentsFrenos,
     };
-
+ componentsAceite.forEach(c => c.serviceId = service1.id);
+    componentsFrenos.forEach(c => c.serviceId = service2.id);
 
     //Crear órdenes
 

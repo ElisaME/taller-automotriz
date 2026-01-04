@@ -1,11 +1,21 @@
+import OrderServiceItems from '@/components/orders/workshop/OrderServiceItems';
+import OrderTimelineEvents from '@/components/orders/OrderTimelineEvents';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardTitle, CardContent } from '@/components/ui/card';
+
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { storageManager } from '@/lib/storage/storageManager';
+import {
+  formatCurrency,
+  formatDate,
+  getTotalComponents,
+  getTotalServicesLabor,
+} from '@/lib/utils';
 import { type Customer, type RepairOrder, type Vehicle } from '@/models';
-import { ArrowLeft, CarFront, User } from 'lucide-react';
+import { ArrowLeft, CarFront, CirclePlus, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -15,6 +25,7 @@ export function OrderDetails() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const navigate = useNavigate();
   useEffect(() => {
     const loadOrder = () => {
@@ -40,6 +51,13 @@ export function OrderDetails() {
     loadOrder();
   }, [id]);
 
+  const totalServices = getTotalServicesLabor(order?.services || []);
+  const totalComponents = getTotalComponents(
+    order?.services.flatMap((s) => s.components) || []
+  );
+
+  const totalEstimated = (totalComponents + totalServices) * 1.16;
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -59,6 +77,7 @@ export function OrderDetails() {
     <div className="container">
       {/* Header con botón volver y estado */}
       <Button
+        className="cursor-pointer"
         variant="ghost"
         size="sm"
         onClick={() => navigate('/taller/ordenes')}
@@ -81,13 +100,7 @@ export function OrderDetails() {
       </div>
       <p>
         {`Orden creada el
-              ${new Date(order.events[0].timeStamp).toLocaleString('es-MX', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}`}
+              ${formatDate(order.events[0].timeStamp)}`}
       </p>
       <Separator className="my-4" orientation="horizontal" />
       {/* Datos cliente y vehículo */}
@@ -140,78 +153,58 @@ export function OrderDetails() {
         </Card>
       </div>
       <Separator className="my-4" orientation="horizontal" />
-      {/* Datos de servicios y refacciones */}
-      <h2 className="font-bold text-2xl text-primary">
-        Servicios y Refacciones
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-6">
-        <div className="overflow-hidden rounded-lg bg-gray-200 col-span-4">
-          {order.services.map((service, index) => (
-            <div key={service.id} className="border rounded-lg p-4 space-y-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-semibold text-lg">
-                    {index + 1}. {service.name}
-                  </h4>
-                  {service.description && (
-                    <p className="text-sm text-gray-600">
-                      {service.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Labor */}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-600">Labor estimada:</span>
-                  <span className="ml-2 font-medium">
-                    ${service.laborEstimated}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600">Labor real:</span>
-                  <span className="ml-2 font-medium">
-                    {service.laborReal > 0
-                      ? `$${service.laborReal}`
-                      : 'Pendiente'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Componentes */}
-              {service.components.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    Componentes:
-                  </p>
-                  <div className="space-y-1 pl-4">
-                    {service.components.map((component) => (
-                      <div
-                        key={component.id}
-                        className="flex justify-between text-sm"
-                      >
-                        <span className="text-gray-700">
-                          • {component.name}
-                        </span>
-                        <div className="space-x-4">
-                          <span className="text-gray-600">
-                            Est: ${component.estimated}
-                          </span>
-                          <span className="font-medium">
-                            Real:{' '}
-                            {component.real > 0
-                              ? `$${component.real}`
-                              : 'Pendiente'}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
+        {/* Datos de servicios y refacciones */}
+        <div className="col-span-4">
+          <h2 className="font-bold text-xl text-primary">
+            Servicios y Refacciones
+          </h2>
+          <OrderServiceItems services={order.services} />
+          {/* Agregar servicio o refacción */}
+          <div
+            role="button"
+            className="w-full border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center p-4"
+          >
+            <CirclePlus className="w-8 h-8 text-primary mr-2" />
+            <span>Agregar Servicio o Refacción</span>
+          </div>
+        </div>
+        <div className="col-span-2 space-y-6">
+          {/* Datos Costos */}
+          <div>
+            <h2 className="font-bold text-xl text-secondary border-b-2">
+              Resumen Financiero
+            </h2>
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Subtotal Servicios</TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(totalServices)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Subtotal Refacciones</TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(totalComponents)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-bold text-lg text-secondary">
+                    Total Estimado:
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-xl">
+                    {formatCurrency(totalEstimated)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+          {/* Historial de Eventos */}
+          <h2 className="font-bold text-xl text-secondary border-b-2 mb-0">
+            Historial de Eventos
+          </h2>
+          <OrderTimelineEvents events={order.events} />
         </div>
       </div>
     </div>

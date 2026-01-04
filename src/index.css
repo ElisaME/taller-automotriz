@@ -82,6 +82,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --color-lemon: rgba(208 223 0);
+  --color-primary: #63666a;
+  --color-secondary: #53565a;
 }
 
 .dark {
@@ -128,6 +131,6 @@
 }
 
 body {
-  color: var(--color-primary);
+  color: var(--color-primary) !important;
   font-family: 'Roboto Condensed', sans-serif;
 }
