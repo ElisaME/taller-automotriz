@@ -9,6 +9,7 @@ import {
 import { storageManager } from '@/lib/storage/storageManager';
 import { OrderStatus } from '@/models';
 import { Plus, NotepadText, Hammer, CircleCheckBig } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashboardTaller() {
   const orders = storageManager.getAllRepairOrders();
@@ -16,6 +17,10 @@ export default function DashboardTaller() {
   const ordersInProgress = orders.filter(
     (order) => order.status === OrderStatus.IN_PROGRESS
   ).length;
+  const ordersCompleted = orders.filter(
+    (order) => order.status === OrderStatus.COMPLETED
+  ).length;
+  const navigate = useNavigate();
   return (
     <div>
       <div className="flex justify-between space-y-6">
@@ -25,7 +30,10 @@ export default function DashboardTaller() {
             Gestion y supervise todas las reparaciones activas en el taller.
           </p>
         </div>
-        <Button className="bg-lemon text-primary">
+        <Button
+          className="bg-lemon text-primary hover:text-white cursor-pointer"
+          onClick={() => navigate('/taller/nuevaOrden')}
+        >
           <Plus />
           <span>Nueva Orden</span>
         </Button>
@@ -74,7 +82,7 @@ export default function DashboardTaller() {
             </CardTitle>
             <CardDescription className="py-2">
               <p className="font-bold text-5xl text-primary">
-                {ordersInProgress}
+                {ordersCompleted}
               </p>
             </CardDescription>
           </CardContent>

@@ -8,6 +8,7 @@ import DashboardTaller from './pages/taller/page';
 import DashboardCliente from './pages/client/page';
 import { WorkshopLayout } from '@/components/layout/WorkshopLayout';
 import { OrderDetails } from './pages/taller/orderDetails';
+import TallerNuevaOrden from './pages/taller/newOrder';
 // import { storageManager } from './lib/storage/storageManager';
 // storageManager.clearAll();
 seedData();
@@ -29,6 +30,7 @@ function App() {
           >
             <Route index element={<DashboardTaller />} />
             <Route path="ordenes/:id" element={<OrderDetails />} />
+            <Route path="nuevaOrden" element={<TallerNuevaOrden />} />
           </Route>
           <Route
             path="/cliente"
