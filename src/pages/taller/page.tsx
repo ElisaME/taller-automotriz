@@ -1,4 +1,4 @@
-import OrdersWorkshop from '@/components/orders/workshop/orders-workshop';
+import Orders from '@/components/orders/workshop/orders';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -88,7 +88,10 @@ export default function DashboardTaller() {
           </CardContent>
         </Card>
       </div>
-      <OrdersWorkshop />
+      <Orders
+        orders={orders}
+        handleOrderClick={(e) => navigate(`/taller/ordenes/${e}`)}
+      />
     </div>
   );
 }

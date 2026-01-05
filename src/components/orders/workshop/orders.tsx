@@ -3,14 +3,17 @@ import { SearchBar } from '@/components/shared/search-bar';
 import { OrdersFilter } from '../orders-filter';
 import { TableOrders } from '../orders-table';
 import { searchOrders } from '@/lib/storage/orderQueries';
-import { useNavigate } from 'react-router-dom';
+import type { RepairOrder } from '@/models';
 
-export default function OrdersWorkshop() {
+interface OrdersProps {
+  orders: RepairOrder[];
+  handleOrderClick: (orderId: string) => void;
+}
+export default function Orders({ orders, handleOrderClick }: OrdersProps) {
   const [searchValue, setSearchValue] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const navigate = useNavigate();
 
-  const filteredOrders = searchOrders(searchValue);
+  const filteredOrders = searchOrders(orders, searchValue);
   const sortedOrders =
     statusFilter === 'all'
       ? filteredOrders
@@ -37,7 +40,8 @@ export default function OrdersWorkshop() {
         <TableOrders
           orders={sortedOrders}
           onOrderClick={(id) => {
-            navigate(`/taller/ordenes/${id}`);
+            handleOrderClick(id);
+            // navigate(`/taller/ordenes/${id}`);
           }}
         ></TableOrders>
       </div>

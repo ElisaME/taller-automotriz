@@ -11,16 +11,18 @@ import { Edit, Wrench } from 'lucide-react';
 import { formatCurrency, getTotalComponents } from '@/lib/utils';
 import type { Service } from '@/models';
 import { Button } from '@/components/ui/button';
+import { storageManager } from '@/lib/storage/storageManager';
 
 interface OrderServicesProps {
   services: Service[];
-  openEditDialog: (serviceId: Service) => void;
+  openEditDialog?: (serviceId: Service) => void;
 }
 
 export default function OrderServiceItems({
   services,
   openEditDialog,
 }: OrderServicesProps) {
+  const role = storageManager.getUserRole();
   return (
     <>
       <div className="overflow-hidden rounded-lg bg-gray-200">
@@ -32,8 +34,14 @@ export default function OrderServiceItems({
               <TableHead className="text-primary">
                 Mano de Obra Estimado
               </TableHead>
-              <TableHead className="text-primary">Mano de Obra Real</TableHead>
-              <TableHead className="text-primary">Acciones</TableHead>
+              {role === 'TALLER' && (
+                <>
+                  <TableHead className="text-primary">
+                    Mano de Obra Real
+                  </TableHead>
+                  <TableHead className="text-primary">Acciones</TableHead>
+                </>
+              )}
             </TableRow>
           </TableHeader>
         </Table>
@@ -49,21 +57,25 @@ export default function OrderServiceItems({
                   <TableCell>
                     {formatCurrency(service.laborEstimated)}
                   </TableCell>
-                  <TableCell>
-                    {service.laborReal > 0
-                      ? formatCurrency(service.laborReal)
-                      : 'Pendiente'}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Button
-                      className="cursor-pointer"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openEditDialog(service)}
-                    >
-                      <Edit />
-                    </Button>
-                  </TableCell>
+                  {role === 'TALLER' && openEditDialog && (
+                    <>
+                      <TableCell>
+                        {service.laborReal > 0
+                          ? formatCurrency(service.laborReal)
+                          : 'Pendiente'}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Button
+                          className="cursor-pointer"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditDialog(service)}
+                        >
+                          <Edit />
+                        </Button>
+                      </TableCell>
+                    </>
+                  )}
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={4}>

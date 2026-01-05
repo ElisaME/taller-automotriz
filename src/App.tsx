@@ -9,6 +9,8 @@ import DashboardCliente from './pages/client/page';
 import { WorkshopLayout } from '@/components/layout/WorkshopLayout';
 import { OrderDetails } from './pages/taller/orderDetails';
 import TallerNuevaOrden from './pages/taller/newOrder';
+import { ClientLayout } from './components/layout/ClientLayout';
+import { OrderDetailClient } from './pages/client/orderDetails';
 // import { storageManager } from './lib/storage/storageManager';
 // storageManager.clearAll();
 seedData();
@@ -36,10 +38,13 @@ function App() {
             path="/cliente"
             element={
               <ProtectedRoute requiredRole="CLIENTE">
-                <DashboardCliente />
+                <ClientLayout />
               </ProtectedRoute>
             }
-          ></Route>
+          >
+            <Route index element={<DashboardCliente />} />
+            <Route path="orden/:id" element={<OrderDetailClient />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

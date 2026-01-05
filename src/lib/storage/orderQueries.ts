@@ -11,10 +11,9 @@ const normalizeString = (value:string) : string => {
     .trim();
 }
 
-export const searchOrders = ( query:string) : RepairOrder[] => {
+export const searchOrders = ( orders: RepairOrder[], query:string) : RepairOrder[] => {
     const value = normalizeString(query)
-    return storageManager
-        .getAllRepairOrders()
+    return orders
         .filter(order => {
             const vehicle = storageManager.getVehicle(order.vehicleId);
             const customer = storageManager.getCustomer(order.customerId);

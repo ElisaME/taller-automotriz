@@ -154,6 +154,11 @@ class StorageManager {
         this.saveToStorage(this.KEYS.SERVICES, services);
     }
 
+    //Role
+    getUserRole(): string | null {
+        return localStorage.getItem('user-role');
+    }
+
     //Para testing
     clearAll(): void{
         Object.values(this.KEYS).forEach(key => localStorage.removeItem(key));

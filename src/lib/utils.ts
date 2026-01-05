@@ -75,6 +75,17 @@ export const transitionActionsWorkshop: Record<OrderStatus, TransitionAction> = 
   [OrderStatus.CREATED]: { label: '' }, //NA
 };
 
+export const transitionActionsClient: Record<OrderStatus, TransitionAction> = {
+  [OrderStatus.DIAGNOSED]: { label: '' },
+  [OrderStatus.AUTHORIZED]: { label: 'Autorizar', variant: 'bg-green-500'},//Solo el cliente autoriza
+  [OrderStatus.IN_PROGRESS]: { label: '' },
+  [OrderStatus.COMPLETED]: { label: '' },
+  [OrderStatus.DELIVERED]: { label: '' },
+  [OrderStatus.CANCELLED]: { label: '' },
+  [OrderStatus.WAITING_FOR_APPROVAL]: { label: '' },
+  [OrderStatus.CREATED]: { label: '' }, //NA
+};
+
 export const getAvailableTransitions = (
   currentStatus: OrderStatus
 ): OrderStatus[] => {

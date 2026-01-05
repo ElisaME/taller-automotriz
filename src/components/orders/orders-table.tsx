@@ -16,6 +16,7 @@ interface TableOrdersProps {
 }
 
 export function TableOrders({ orders, onOrderClick }: TableOrdersProps) {
+  const role = storageManager.getUserRole();
   return (
     <div className="space-y-4">
       <div className="overflow-hidden rounded-lg border border-gray-300 bg-gray-200">
@@ -25,7 +26,9 @@ export function TableOrders({ orders, onOrderClick }: TableOrdersProps) {
               <TableHead className="text-primary">ID Orden</TableHead>
               <TableHead className="text-primary">Vehículo</TableHead>
               <TableHead className="text-primary">Placa</TableHead>
-              <TableHead className="text-primary">Cliente</TableHead>
+              {role === 'taller' && (
+                <TableHead className="text-primary">Cliente</TableHead>
+              )}
               <TableHead className="text-primary">Estado</TableHead>
             </TableRow>
           </TableHeader>
@@ -43,7 +46,7 @@ export function TableOrders({ orders, onOrderClick }: TableOrdersProps) {
                   <TableCell>{order.orderId}</TableCell>
                   <TableCell>{vehicle.model}</TableCell>
                   <TableCell>{vehicle.plate}</TableCell>
-                  <TableCell>{customer.name}</TableCell>
+                  {role === 'taller' && <TableCell>{customer.name}</TableCell>}
                   <TableCell>
                     <StatusBadge status={order.status} />
                   </TableCell>
