@@ -27,12 +27,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { transitionOrder } from '@/hooks/orderService';
 import { toast } from 'sonner';
+import AuthorizeOrderDialog from '@/components/orders/client/AuthorizeOrder';
 
 export function OrderDetailClient() {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<RepairOrder | null>(null);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthorizeDialogOpen, setIsAuthorizeDialogOpen] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -68,6 +70,10 @@ export function OrderDetailClient() {
   const transitionOrderAction = (orderId: string, newStatus: OrderStatus) => {
     setIsLoading(true);
     try {
+      if (newStatus === OrderStatus.AUTHORIZED) {
+        setIsAuthorizeDialogOpen(true);
+        return;
+      }
       const result = transitionOrder(orderId, newStatus);
       if (result.success && result.order) {
         setOrder(result.order);
@@ -227,6 +233,19 @@ export function OrderDetailClient() {
             </TableBody>
           </Table>
         </div>
+      </div>
+      {/* Autorizar Orden */}
+      <div>
+        <AuthorizeOrderDialog
+          order={order}
+          open={isAuthorizeDialogOpen}
+          onOpenChange={setIsAuthorizeDialogOpen}
+          onSuccess={() => {
+            setIsAuthorizeDialogOpen(false);
+            const updatedOrder = storageManager.getRepairOrder(order.id);
+            if (updatedOrder) setOrder(updatedOrder);
+          }}
+        />
       </div>
     </div>
   );

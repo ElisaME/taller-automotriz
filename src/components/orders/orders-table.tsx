@@ -26,7 +26,7 @@ export function TableOrders({ orders, onOrderClick }: TableOrdersProps) {
               <TableHead className="text-primary">ID Orden</TableHead>
               <TableHead className="text-primary">Vehículo</TableHead>
               <TableHead className="text-primary">Placa</TableHead>
-              {role === 'taller' && (
+              {role === 'TALLER' && (
                 <TableHead className="text-primary">Cliente</TableHead>
               )}
               <TableHead className="text-primary">Estado</TableHead>
@@ -46,7 +46,7 @@ export function TableOrders({ orders, onOrderClick }: TableOrdersProps) {
                   <TableCell>{order.orderId}</TableCell>
                   <TableCell>{vehicle.model}</TableCell>
                   <TableCell>{vehicle.plate}</TableCell>
-                  {role === 'taller' && <TableCell>{customer.name}</TableCell>}
+                  {role === 'TALLER' && <TableCell>{customer.name}</TableCell>}
                   <TableCell>
                     <StatusBadge status={order.status} />
                   </TableCell>

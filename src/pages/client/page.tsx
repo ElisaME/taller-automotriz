@@ -13,9 +13,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function DashboardCliente() {
   //Simulación de obtener órdenes de un cliente autenticado
-  const orders = storageManager.getOrdersByCustomer(
-    '13a145c3-d9f3-4a33-9d19-72e0b286ee0a'
-  );
+  const customer = storageManager.getAllCustomers()[0];
+  const orders = storageManager.getOrdersByCustomer(customer.id);
   const totalOrders = orders.length;
   const ordersInProgress = orders.filter(
     (order) => order.status === OrderStatus.IN_PROGRESS

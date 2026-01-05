@@ -11,6 +11,8 @@ import { OrderDetails } from './pages/taller/orderDetails';
 import TallerNuevaOrden from './pages/taller/newOrder';
 import { ClientLayout } from './components/layout/ClientLayout';
 import { OrderDetailClient } from './pages/client/orderDetails';
+
+// For Test
 // import { storageManager } from './lib/storage/storageManager';
 // storageManager.clearAll();
 seedData();

@@ -31,7 +31,7 @@ export const transitionOrder = (
 
     const updatedOrder = orderStatusManager.transition(
       order,
-      newStatus
+      newStatus,
     );
 
     storageManager.saveRepairOrder(updatedOrder);
@@ -70,7 +70,7 @@ export const transitionOrder = (
   }
 };
 
-export const authorizeOrder = (orderId: string, authorizedAmount: number) => {
+export const authorizeOrder = (orderId: string, authorizedAmount: number, comment:string) => {
   try {
     // gET orden
     const order = storageManager.getRepairOrder(orderId);
@@ -87,7 +87,7 @@ export const authorizeOrder = (orderId: string, authorizedAmount: number) => {
           orderId: order.id,
           amount: authorizedAmount,
           createdAt: new Date().toISOString(),
-          comment: 'Autorización del cliente',
+          comment: comment,
         },
       ],
     };
