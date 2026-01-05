@@ -7,15 +7,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Wrench } from 'lucide-react';
+import { Edit, Wrench } from 'lucide-react';
 import { formatCurrency, getTotalComponents } from '@/lib/utils';
 import type { Service } from '@/models';
+import { Button } from '@/components/ui/button';
 
 interface OrderServicesProps {
   services: Service[];
+  openEditDialog: (serviceId: Service) => void;
 }
 
-export default function OrderServiceItems({ services }: OrderServicesProps) {
+export default function OrderServiceItems({
+  services,
+  openEditDialog,
+}: OrderServicesProps) {
   return (
     <>
       <div className="overflow-hidden rounded-lg bg-gray-200">
@@ -28,6 +33,7 @@ export default function OrderServiceItems({ services }: OrderServicesProps) {
                 Mano de Obra Estimado
               </TableHead>
               <TableHead className="text-primary">Mano de Obra Real</TableHead>
+              <TableHead className="text-primary">Acciones</TableHead>
             </TableRow>
           </TableHeader>
         </Table>
@@ -47,6 +53,16 @@ export default function OrderServiceItems({ services }: OrderServicesProps) {
                     {service.laborReal > 0
                       ? formatCurrency(service.laborReal)
                       : 'Pendiente'}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      className="cursor-pointer"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openEditDialog(service)}
+                    >
+                      <Edit />
+                    </Button>
                   </TableCell>
                 </TableRow>
                 <TableRow>

@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
+} from '../../ui/dialog';
+import { Label } from '../../ui/label';
+import { Input } from '../../ui/input';
+import { Button } from '../../ui/button';
 import { Plus, Trash2 } from 'lucide-react';
-import { Textarea } from '../ui/textarea';
+import { Textarea } from '../../ui/textarea';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { formatCurrency, generateId } from '@/lib/utils';
 import { storageManager } from '@/lib/storage/storageManager';
@@ -22,6 +22,8 @@ interface AddServiceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onServiceAdded: () => void;
+  mode: 'create' | 'edit';
+  initialServiceData?: Service;
 }
 
 type ComponentForm = {
@@ -43,6 +45,8 @@ export default function AddServiceDialog({
   open,
   onOpenChange,
   onServiceAdded,
+  mode,
+  initialServiceData,
 }: AddServiceDialogProps) {
   const {
     register,
@@ -73,8 +77,42 @@ export default function AddServiceDialog({
     0
   );
 
+  useEffect(() => {
+    if (mode === 'create') {
+      reset({
+        name: '',
+        description: '',
+        laborEstimated: 0,
+        components: [],
+      });
+    }
+
+    if (mode === 'edit' && initialServiceData) {
+      reset({
+        name: initialServiceData.name,
+        description: initialServiceData.description,
+        laborEstimated: initialServiceData.laborEstimated,
+        components: initialServiceData.components.map((c) => ({
+          id: c.id,
+          name: c.name,
+          estimated: c.estimated,
+          description: c.description,
+        })),
+      });
+    }
+  }, [open, mode, initialServiceData, reset]);
+
   const onSubmit = async (data: ServiceForm) => {
-    setIsLoading(true);
+    if (mode === 'create') {
+      createService(data);
+    } else {
+      updateService(data);
+    }
+    onServiceAdded();
+    onOpenChange(false);
+  };
+
+  const createService = (data: ServiceForm) => {
     try {
       const order = storageManager.getRepairOrder(orderId);
       if (!order) return;
@@ -101,10 +139,6 @@ export default function AddServiceDialog({
       order.subtotalEstimated += data.laborEstimated + componentsTotal;
 
       storageManager.saveRepairOrder(order);
-
-      onServiceAdded();
-      reset();
-      onOpenChange(false);
     } catch (error) {
       console.error('Error al agregar servicio:', error);
       toast.error('Error al agregar servicio');
@@ -113,6 +147,68 @@ export default function AddServiceDialog({
       onOpenChange(false);
     }
   };
+
+  const updateService = (data: ServiceForm) => {
+    setIsLoading(true);
+    try {
+      const order = storageManager.getRepairOrder(orderId);
+      const index = order?.services.findIndex(
+        (s) => s.id === initialServiceData?.id
+      );
+
+      if (!order || index === -1 || index === undefined) return;
+
+      const existingComponents = order.services[index].components;
+
+      const updatedComponents = data.components.map(
+        (formComponent: ComponentForm) => {
+          //Actualizar c omponente existente
+          if (formComponent.id) {
+            const existingComponent = existingComponents.find(
+              (c) => c.id === formComponent.id
+            );
+
+            return {
+              ...existingComponent!,
+              name: formComponent.name,
+              estimated: formComponent.estimated,
+              description: formComponent.description,
+            };
+          }
+          //Si noe xiste componente, crearlo
+          return {
+            id: generateId(),
+            name: formComponent.name,
+            estimated: formComponent.estimated,
+            real: 0,
+            description: formComponent.description,
+
+            serviceId: '',
+            orderId: order.id,
+          };
+        }
+      );
+
+      order.services[index] = {
+        ...order.services[index],
+        name: data.name,
+        description: data.description,
+        laborEstimated: data.laborEstimated,
+        components: updatedComponents,
+      };
+
+      storageManager.saveRepairOrder(order);
+      toast.success('Servicio actualizado correctamente');
+    } catch (error) {
+      console.log('Error updating service:', error);
+      toast.error('Error al actualizar el servicio');
+    } finally {
+      setIsLoading(false);
+      onOpenChange(false);
+      reset();
+    }
+  };
+
   const handleClose = () => {
     reset();
     onOpenChange(false);
@@ -123,7 +219,9 @@ export default function AddServiceDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Agregar Servicio</DialogTitle>
+            <DialogTitle>
+              {mode === 'create' ? 'Agregar Servicio' : 'Editar Servicio'}
+            </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -169,7 +267,7 @@ export default function AddServiceDialog({
                 <Input
                   className="border border-gray-400"
                   type="number"
-                  step="0.01"
+                  step="1"
                   min="0"
                   {...register('laborEstimated', {
                     required: true,
@@ -280,7 +378,13 @@ export default function AddServiceDialog({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={handleClose}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                reset();
+                handleClose();
+              }}
+            >
               Cancelar
             </Button>
             <Button

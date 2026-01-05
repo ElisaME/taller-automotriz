@@ -21,6 +21,7 @@ import {
   type BusinessError,
   type Customer,
   type RepairOrder,
+  type Service,
   type Vehicle,
 } from '@/models';
 import { ArrowLeft, CarFront, CirclePlus, User } from 'lucide-react';
@@ -28,7 +29,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { transitionOrder } from '@/hooks/orderService';
 import { toast } from 'sonner';
-import AddServiceDialog from '@/components/orders/AddServiceDialog';
+import AddServiceDialog from '@/components/orders/workshop/AddServiceDialog';
 
 export function OrderDetails() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +38,10 @@ export function OrderDetails() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [addServiceDialog, setAddServiceDialog] = useState(false);
+  const [modeDialog, setModeDialog] = useState<'create' | 'edit'>('create');
+  const [serviceToEdit, setServiceToEdit] = useState<Service | undefined>(
+    undefined
+  );
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -87,6 +92,12 @@ export function OrderDetails() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleEditService = (service: Service) => {
+    setModeDialog('edit');
+    setAddServiceDialog(true);
+    setServiceToEdit(service);
   };
 
   if (isLoading) {
@@ -202,12 +213,19 @@ export function OrderDetails() {
           <h2 className="font-bold text-xl text-primary">
             Servicios y Refacciones
           </h2>
-          <OrderServiceItems services={order.services} />
+          <OrderServiceItems
+            services={order.services}
+            openEditDialog={handleEditService}
+          />
           {/* Agregar servicio o refacción */}
           <button
             role="button"
             className="group cursor-pointer disabled:cursor-not-allowed w-full border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center p-4 disabled:text-primary/50"
-            onClick={() => setAddServiceDialog(true)}
+            onClick={() => {
+              setServiceToEdit(undefined);
+              setModeDialog('create');
+              setAddServiceDialog(true);
+            }}
             disabled={
               order.status !== OrderStatus.DIAGNOSED &&
               order.status !== OrderStatus.CREATED
@@ -226,6 +244,8 @@ export function OrderDetails() {
               const updatedOrder = storageManager.getRepairOrder(order.id);
               if (updatedOrder) setOrder(updatedOrder);
             }}
+            mode={modeDialog}
+            initialServiceData={serviceToEdit}
           />
         </div>
         <div className="col-span-2 space-y-6">
