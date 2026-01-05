@@ -1,73 +1,118 @@
-# React + TypeScript + Vite
+# 🛠️ Taller Automotriz – Gestión de Órdenes de Reparación
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web para la **gestión de órdenes de reparación de un taller automotriz**, que permite registrar clientes, vehículos, servicios, refacciones y controlar el flujo completo de una orden desde su creación hasta la entrega del auto.
 
-Currently, two official plugins are available:
+El proyecto busca tener **buenas prácticas de frontend** que permitan su escalabilidad y mantenimiento, para este ejercicio se tomaron en cuenta las reglas de negocio proporcionadas, se emplearon mocks almacenados en localStorage simulando un entorno real sin backend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Funcionalidades principales
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### 👤 Gestión de usuarios (simulada)
 
-## Expanding the ESLint configuration
+- Se creo una pantalla principal para elegir el rol del usuario:
+  - **TALLER**
+  - **CLIENTE**
+- El rol seleccionado persiste en `localStorage`
+- Rutas protegidas según rol
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📋 Órdenes de reparación
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- El rol del taller permite crear órdenes asociadas a cliente y vehículo o bien crear nuevos.
+- Nota: El rol del cliente no tiene la opción de crear ordenes por el momento.
+- Flujo de estados:
+  - `CREATED`
+  - `DIAGNOSED`
+  - `WAITING_FOR_APPROVAL`
+  - `AUTHORIZED`
+  - `IN_PROGRESS`
+  - `COMPLETED`
+  - `DELIVERED`
+  - `CANCELLED`
+- Se implementó la validación de transiciones permitidas entre estados de acuerdo a las reglas de negocio.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🔧 Servicios y refacciones
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Se pueden agregar y editar servicios dentro de una orden mientras esté en estado de Creación o Diagnóstico.
+- Cada servicio puede contener:
+  - Mano de obra estimada y real (resta editar el monto real)
+  - Refacciones / componentes
+- Se puede editar un servicio para:
+  - Crear refacciones
+  - Editar refacciones
+  - Eliminar refacciones
+- Reutilización del mismo formulario para **crear y editar** servicios
+
+### 💰 Autorización de órdenes
+
+- El rol del cliente puede autorizar una orden y autorizar un monto
+- Advertencia cuando el monto autorizado es menor al estimado
+- Registro de comentarios del cliente
+- Pendiente mostrar registro de autorizaciones en vista del Taller.
+
+### 🔍 Búsqueda y filtros
+
+- Búsqueda global de órdenes por:
+  - Placas del vehículo
+  - Nombre del cliente
+  - Modelo del vehículo
+
+---
+
+## 🧱 Arquitectura y decisiones técnicas
+
+- **React + TypeScript**
+- **React Router DOM** para navegación
+- **React Hook Form** para manejo de formularios
+- **Componentes shadcn** componentes pre-construidos de fácil personalización
+- Formularios reutilizables (create / edit)
+- Estado global simple mediante **Context API**
+- Persistencia con `localStorage` simulando un backend
+- Separación clara entre:
+  - Componentes contenedores
+  - Componentes presentacionales
+  - Lógica de negocio (services / storage)
+
+---
+
+## 🧠 Manejo de estado
+
+- `AuthContext` para el rol del usuario
+- `storageManager` como capa de acceso a datos del localStorage
+- Estados locales para modales y formularios
+- `useEffect` controlado para carga inicial de datos
+
+---
+
+## 📝 Validaciones
+
+- Validaciones declarativas con `react-hook-form`
+- Campos obligatorios
+- Validaciones numéricas (mínimos, positivos)
+- Manejo de errores visuales y de submit
+
+---
+
+## 📦 Instalación y ejecución
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/ElisaME/taller-automotriz.git
+
+# Entrar al proyecto
+cd taller-automotriz
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Comentarios finales
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Por último quisiera compartir algunos comentarios, este fue un reto muy interesante de realizar, la prueba contemplaba un alcance considerable, cercano al desarrollo de un módulo completo de la aplicación. Dentro del tiempo asignado, me enfoqué en resolver los casos más representativos y de constuir una base sólida y escalable con el objetico de demostrar mi forma de trabajar y toma de decisiones.
+
+Dentro de las cosas que me gustaría completar están: la creación de órdenes con el rol de cliente, pulir la experiencia móvil, realizar unit testing e incorporar animaciones para una mejor experiencia de usuario.

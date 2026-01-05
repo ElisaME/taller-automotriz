@@ -1,5 +1,4 @@
 import OrdersWorkshop from '@/components/orders/workshop/orders';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardTitle,
@@ -8,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { storageManager } from '@/lib/storage/storageManager';
 import { OrderStatus } from '@/models';
-import { Plus, NotepadText, Hammer, CircleCheckBig } from 'lucide-react';
+import { NotepadText, Hammer, CircleCheckBig } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function DashboardCliente() {
@@ -33,13 +32,14 @@ export default function DashboardCliente() {
             Gestion y supervise todas las reparaciones activas en el taller.
           </p>
         </div>
-        <Button
+        {/* Pentiende de implementar la orden nueva de un cliente */}
+        {/* <Button
           className="bg-lemon text-primary hover:text-white cursor-pointer"
           onClick={() => navigate('/taller/nuevaOrden')}
         >
           <Plus />
           <span>Nueva Orden</span>
-        </Button>
+        </Button> */}
       </div>
       {/* Data Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
