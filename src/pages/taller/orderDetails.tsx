@@ -28,6 +28,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { transitionOrder } from '@/hooks/orderService';
 import { toast } from 'sonner';
+import AddServiceDialog from '@/components/orders/AddServiceDialog';
 
 export function OrderDetails() {
   const { id } = useParams<{ id: string }>();
@@ -35,6 +36,7 @@ export function OrderDetails() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [addServiceDialog, setAddServiceDialog] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -202,13 +204,29 @@ export function OrderDetails() {
           </h2>
           <OrderServiceItems services={order.services} />
           {/* Agregar servicio o refacción */}
-          <div
+          <button
             role="button"
-            className="w-full border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center p-4"
+            className="group cursor-pointer disabled:cursor-not-allowed w-full border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center p-4 disabled:text-primary/50"
+            onClick={() => setAddServiceDialog(true)}
+            disabled={
+              order.status !== OrderStatus.DIAGNOSED &&
+              order.status !== OrderStatus.CREATED
+            }
           >
-            <CirclePlus className="w-8 h-8 text-primary mr-2" />
+            <CirclePlus className="w-8 h-8 text-primary mr-2 group-disabled:text-primary/50" />
             <span>Agregar Servicio o Refacción</span>
-          </div>
+          </button>
+          <AddServiceDialog
+            orderId={order.id}
+            open={addServiceDialog}
+            onOpenChange={(e) => setAddServiceDialog(e)}
+            onServiceAdded={() => {
+              // Recargar la orden después de agregar el servicio
+              setAddServiceDialog(false);
+              const updatedOrder = storageManager.getRepairOrder(order.id);
+              if (updatedOrder) setOrder(updatedOrder);
+            }}
+          />
         </div>
         <div className="col-span-2 space-y-6">
           {/* Datos Costos */}
